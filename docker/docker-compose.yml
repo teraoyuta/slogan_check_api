@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  nginx:
+    image: nginx:1.17
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params
+      - ../src/static:/static
+    depends_on:
+      - python
+    restart: always
+
+  db: 
+    build: ./mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - django.db.volume:/var/lib/mysql
+      - ./mysql/init.d:/docker-entrypoint-initdb.d
+    restart: always
+
+  python:
+    build: ./python
+    command: uwsgi --socket :8001 --module slogan_checker.wsgi --logto /tmp/uwsgi.log --py-autoreload 1
+    volumes:
+      - ../src:/code
+      - ../src/static:/static
+    expose:
+      - "8001"
+    depends_on:
+      - db
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: rootpass
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+ django.db.volume:
+   name: django.db.volume

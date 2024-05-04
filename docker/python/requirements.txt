@@ -1,0 +1,10 @@
+Django==2.2.12
+uwsgi==2.0.18
+mysqlclient==1.4.6
+djangorestframework
+torch
+transformers
+fugashi
+ipadic
+pykakasi
+django_boost
