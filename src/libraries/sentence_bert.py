@@ -5,7 +5,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class SentenceBertJapanese:
-    def __init__(self, model_name_or_path:str, device:str=None):
+    def __init__(self, model_name_or_path: str, device: str = None):
         self.tokenizer = BertJapaneseTokenizer.from_pretrained(model_name_or_path)
         self.model = BertModel.from_pretrained(model_name_or_path)
         self.model.eval()
@@ -21,7 +21,7 @@ class SentenceBertJapanese:
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
 
 
-    def encode_sentences(self, sentences:list, batch_size:int=8):
+    def encode_sentences(self, sentences: list, batch_size: int = 8):
         all_embeddings = []
         iterator = range(0, len(sentences), batch_size)
         for batch_idx in iterator:
@@ -36,7 +36,7 @@ class SentenceBertJapanese:
 
         return torch.stack(all_embeddings)
     
-    def encode_sentence(self, sentence:str):
+    def encode_sentence(self, sentence: str):
         encoded_input = self.tokenizer.encode_plus(sentence, padding="longest", truncation=True, return_tensors="pt").to(self.device)
         model_output = self.model(**encoded_input)
         sentence_embedding = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
@@ -57,6 +57,6 @@ class SentenceBertJapanese:
         vec_string = ','.join(vec_str_list)
         return vec_string
     
-    def vec_from_list(self, vecs_list:list):
+    def vec_from_list(self, vecs_list: list):
         vecs_tensor = torch.tensor(vecs_list)
         return vecs_tensor
