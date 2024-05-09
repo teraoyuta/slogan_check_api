@@ -16,7 +16,7 @@ def check_slogan(request):
 @api_view(['POST'])
 def save_slogan(request):
     try:
-        slogans = request.data['sentences']
+        slogans = request.data['slogan_sentences']
         slogan_service = SloganService()
         slogan_service.seva_slogan(slogans)
         return Response({'message':'success insert slogan'})

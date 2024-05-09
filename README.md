@@ -102,13 +102,13 @@
 
 以下のURLにPOSTリクエストを送信します:
 
-<http://localhost:8000/api/save_slogan>
+<http://localhost:8000/api/save_slogan/>
 
 body
 
 ```json
 {
-    "sentences": 
+    "slogan_sentences": 
     [
         "未来を創る、今日の決断。",
         "失敗は成功への階段。",
