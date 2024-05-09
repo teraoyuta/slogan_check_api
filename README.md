@@ -52,7 +52,7 @@
     "distances": [
         {
             "slogan": "少しずつ、確実に、全身しよう。",
-            "distance": 0.96
+            "distance": 1.0
         },
     ]
 }
