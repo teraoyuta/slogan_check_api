@@ -31,7 +31,6 @@
     ```bash
     docker-compose exec python bash
     python manage.py migrate
-    python manage.py loaddata slogan_initial.json
     ```
 
 ## サンプルリクエストとレスポンス
