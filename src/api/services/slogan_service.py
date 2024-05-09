@@ -60,6 +60,7 @@ class SloganService:
             entry = {
                 "id": slogan.id,
                 "slogan": slogan.slogan_sentence,
+                "created_at": slogan.created_at.strftime('%Y-%m-%d %H:%M:%S')
             }
             json_data.append(entry)
         return json_data
