@@ -26,7 +26,7 @@
     docker-compose up -d
     ```
 
-5. Pythonのコンテナに入り、マイグレーションと初期データの読み込みを行います:
+5. Pythonのコンテナに入り、マイグレーションを行います:
 
     ```bash
     docker-compose exec python bash
