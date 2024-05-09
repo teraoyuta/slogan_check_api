@@ -19,6 +19,7 @@ def check_slogan(request):
     except Exception as e:
         logger.error(f"{e.__class__.__name__}: {e}")
         return Response({'message': f"{e.__class__.__name__}: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     return Response({'message':'success check slogan', 'distances': sentence_distances}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
@@ -32,6 +33,7 @@ def save_slogan(request):
     except Exception as e:
         logger.error(f"{e.__class__.__name__}: {e}")
         return Response({'message': f"{e.__class__.__name__}: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     return Response({'message':'success insert slogan'}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
