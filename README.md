@@ -132,7 +132,7 @@ body
 }
 ```
 
-リクエストのボディーに登録したい標語のリストを指定し登録します。
+リクエストのボディーに登録したい標語のリストを指定し登録します
 
 ### 標語リスト取得api
 
@@ -202,8 +202,8 @@ body
 }
 ```
 
-select_head_dateは登録日による検索開始日、select_tail_dateには終了日をYYYY-MM-DD形式で設定します。
-select_head_date、select_tail_dateは共に任意です。
+select_head_dateは登録日による検索開始日、select_tail_dateには終了日をYYYY-MM-DD形式で設定します
+select_head_date、select_tail_dateは共に任意です
 
 ### 標語削除api
 
@@ -221,4 +221,4 @@ select_head_date、select_tail_dateは共に任意です。
 }
 ```
 
-リクエストには、削除したい標語の登録idを指定します。(削除は論理削除となります。)
+リクエストには、削除したい標語の登録idを指定します (削除は論理削除となります)
