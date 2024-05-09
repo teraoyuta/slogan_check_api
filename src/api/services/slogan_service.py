@@ -18,19 +18,14 @@ class SloganService:
         hiragana = self.conberter.change_kangi_to_hiragana(sentence)
 
         all_slogans = Slogans.objects.all()
-        # vector_list = [slogan.vector for slogan in all_slogans]
-        slogan_list = [slogan.slogan_sentence for slogan in all_slogans]
-        vecs = self.sentence_bert_model.vec_from_binary(all_slogans)
+        slogan_vecs_dict = self.sentence_bert_model.vec_from_binary(all_slogans)
 
         target_vec = self.sentence_bert_model.encode_sentence(hiragana)
 
         # コサイン類似度による類似度算出
-        distance_list = F.cosine_similarity(target_vec, vecs).tolist()
-        logger.info(target_vec)
-        logger.info(vecs)
-        logger.info(distance_list)
+        distance_list = F.cosine_similarity(target_vec, slogan_vecs_dict['vecs']).tolist()
         json_data = []
-        for slogan, distance in zip(slogan_list, distance_list):
+        for slogan, distance in zip(slogan_vecs_dict['slogan_sentence'], distance_list):
             entry = {
                 "slogan": slogan,
                 "distance": round(distance, 2),
@@ -42,12 +37,16 @@ class SloganService:
         return sorted_json_data
     
     def seva_slogan(self, slogans: list):
-        for slogan in slogans:
-            hiragana = self.conberter.change_kangi_to_hiragana(slogan)
-            vec = self.sentence_bert_model.encode_sentence(hiragana)
-            serialized_vec = pickle.dumps(vec)
-            new_slogan = Slogans(slogan_sentence=slogan, slogan_kana=hiragana, vector=serialized_vec)
-            new_slogan.save()
+        batch_size = 1000
+        for i in range(0, len(slogans), batch_size):
+            batch = slogans[i:i+batch_size]
+            slogan_objects = []
+            for slogan in batch:
+                hiragana = self.conberter.change_kangi_to_hiragana(slogan)
+                vec = self.sentence_bert_model.encode_sentence(hiragana)
+                serialized_vec = pickle.dumps(vec)
+                slogan_objects.append(Slogans(slogan_sentence=slogan, slogan_kana=hiragana, vector=serialized_vec))
+            Slogans.objects.bulk_create(slogan_objects)
 
     def get_slogan_list(self, search_head_date: datetime = None, search_tail_date: datetime = None):
         all_slogans = Slogans.objects.all()

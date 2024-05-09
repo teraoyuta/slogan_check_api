@@ -22,14 +22,6 @@ def check_slogan(request):
 
 @api_view(['POST'])
 def save_slogan(request):
-    slogans = request.data['slogan_sentences']
-    slogan_service = SloganService()
-    start_time = time.time()
-    with transaction.atomic():
-        slogan_service.seva_slogan(slogans)
-    syori_time = time.time() - start_time
-    logger.info("処理時間: " + str(syori_time))
-    return Response({'message':'success insert slogan'})
     try:
         slogans = request.data['slogan_sentences']
         slogan_service = SloganService()

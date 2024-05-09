@@ -52,9 +52,11 @@ class SentenceBertJapanese:
     
     def vec_from_binary(self, slogans: Slogans):
         tensor_list = []
+        slogan_list = []
         for slogan in slogans:
             serialized_tensor = slogan.vector
             tensor = pickle.loads(serialized_tensor).squeeze()
             tensor_list.append(tensor)
+            slogan_list.append(slogan.slogan_sentence)
         tensors = torch.stack(tensor_list)
-        return tensors
+        return {'vecs': tensors, 'slogan_sentence': slogan_list}
