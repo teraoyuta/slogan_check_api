@@ -22,15 +22,15 @@ class SloganService:
         target_vec = self.sentence_bert_model.encode_sentence(hiragana)
 
         # コサイン類似度による類似度算出
-        distance_list = F.cosine_similarity(target_vec, slogan_vecs_dict['vecs']).tolist()
+        distance_list = F.cosine_similarity(target_vec, slogan_vecs_dict[self.sentence_bert_model.VECS_KEY]).tolist()
         json_data = []
-        for slogan, distance in zip(slogan_vecs_dict['slogan_sentence'], distance_list):
+        for slogan, distance in zip(slogan_vecs_dict[self.sentence_bert_model.SENTENCES_KEY], distance_list):
             entry = {
                 "slogan": slogan,
                 "distance": round(distance, 2),
             }
             json_data.append(entry)
-        sorted_json_data = sorted(json_data, key=lambda x: x['distance'], reverse=True)
+        sorted_json_data = sorted(json_data, key=lambda x: x["distance"], reverse=True)
         if (limit is not None):
             sorted_json_data = sorted_json_data[:limit]
         return sorted_json_data

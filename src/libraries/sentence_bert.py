@@ -17,6 +17,8 @@ class SentenceBertJapanese:
             device = "cuda" if torch.cuda.is_available() else "cpu"
         self.device = torch.device(device)
         self.model.to(device)
+        self.VECS_KEY = "vecs"
+        self.SENTENCES_KEY = "sentences"
 
     def _mean_pooling(self, model_output, attention_mask):
         token_embeddings = model_output[0] #First element of model_output contains all token embeddings
@@ -59,4 +61,4 @@ class SentenceBertJapanese:
             tensor_list.append(tensor)
             slogan_list.append(slogan.slogan_sentence)
         tensors = torch.stack(tensor_list)
-        return {'vecs': tensors, 'slogan_sentence': slogan_list}
+        return {self.VECS_KEY: tensors, self.SENTENCES_KEY: slogan_list}
