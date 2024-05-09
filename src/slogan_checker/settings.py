@@ -135,6 +135,10 @@ DATABASES = {
         'PASSWORD': 'djangopass',
         'PORT': '3306',
         'HOST': 'db',
+        'ATOMIC_REQUESTS': True,
+        'OPTIONS': {
+            'connect_timeout': 150,
+        },
     }
 }
 

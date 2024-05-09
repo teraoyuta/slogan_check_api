@@ -42,7 +42,7 @@
 
 以下のURLにGETリクエストを送信します:
 
-<http://localhost:8000/api/check_slogan/?slogan_sentence=少しずつ、確実に、全身しよう。>
+<http://localhost:8000/api/check_slogan/?slogan_sentence=少しずつ、確実に、全身しよう。&response_limit=1>
 
 #### レスポンス
 
@@ -54,47 +54,11 @@
             "slogan": "少しずつ、確実に、全身しよう。",
             "distance": 0.96
         },
-        {
-            "slogan": "一歩ずつ、一緒に進もう。",
-            "distance": 0.72
-        },
-        {
-            "slogan": "決して諦めるな、ただ全身しよう。",
-            "distance": 0.68
-        },
-        {
-            "slogan": "賢故さと熱意で成功を目指そう。",
-            "distance": 0.56
-        },
-        {
-            "slogan": "夢を追いかける勇気を持ち続けよう。",
-            "distance": 0.5
-        },
-        {
-            "slogan": "変化を恐れずに、受け入れよう。",
-            "distance": 0.5
-        },
-        {
-            "slogan": "希望を持ち、行動しよう。",
-            "distance": 0.4
-        },
-        {
-            "slogan": "努力は無駄にならない。",
-            "distance": 0.38
-        },
-        {
-            "slogan": "未来は今日の選択にかかっている。",
-            "distance": 0.34
-        },
-        {
-            "slogan": "チャレンジは成長の機会である。",
-            "distance": 0.26
-        }
     ]
 }
 ```
 
-リクエストには、特定の標語（"slogan_sentence"）を指定し、類似度（"distance"）が高い順にレスポンスが返されます
+リクエストには、特定の標語（"slogan_sentence"）を指定し、類似度（"distance"）が高い順に上限レスポンス数(response_limit)分のレスポンスが返されます
 
 ### 標語登録api
 
@@ -140,7 +104,7 @@ body
 
 以下のURLにGETリクエストを送信します:
 
-<http://localhost:8000/api/get_slogan_list?select_head_date=2015-08-25&select_tail_date=2016-08-30>
+<http://localhost:8000/api/get_slogan_list?search_head_date=2015-08-25&search_tail_date=2016-08-30>
 
 #### レスポンス
 
@@ -202,8 +166,8 @@ body
 }
 ```
 
-select_head_dateは登録日による検索開始日、select_tail_dateには終了日をYYYY-MM-DD形式で設定します
-select_head_date、select_tail_dateは共に任意です
+検索対象開始日(search_head_date)、検索対象終了日(search_tail_date)YYYY-MM-DD形式で設定します
+search_head_date、search_tail_dateは共に任意です
 
 ### 標語削除api
 
@@ -221,4 +185,4 @@ select_head_date、select_tail_dateは共に任意です
 }
 ```
 
-リクエストには、削除したい標語の登録idを指定します (削除は論理削除となります)
+リクエストには、削除したい標語の登録ID(id)を指定します (削除は論理削除となります)

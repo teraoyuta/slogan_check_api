@@ -8,6 +8,7 @@ services:
     volumes:
       - ./nginx/conf:/etc/nginx/conf.d
       - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ../src/static:/static
     depends_on:
       - python
