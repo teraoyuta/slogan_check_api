@@ -11,19 +11,22 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'ai8zy)w(7d$y91=h+hh6uauxwsa++=_4vs&dxd2nf)10ng$0yi'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -43,8 +46,11 @@ LOGGING = {
     'handlers': {
         'file': {
             'level': 'DEBUG',
-            'class': 'logging.FileHandler',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': logfile_path,
+            'when': 'midnight',
+            'interval': 1,
+            'backupCount': 7,
         },
         'console': {
             'level': 'DEBUG',
@@ -129,12 +135,12 @@ WSGI_APPLICATION = 'slogan_checker.wsgi.application'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_db',
-        'USER': 'django_user',
-        'PASSWORD': 'djangopass',
-        'PORT': '3306',
-        'HOST': 'db',
+        'ENGINE': env('DATABASE_DEFAULT_ENGINE'),
+        'NAME': env('DATABASE_DEFAULT_NAME'),
+        'USER': env('DATABASE_DEFAULT_USER'),
+        'PASSWORD': env('DATABASE_DEFAULT_PASSWORD'),
+        'PORT': env('DATABASE_DEFAULT_PORT'),
+        'HOST': env('DATABASE_DEFAULT_HOST'),
         'ATOMIC_REQUESTS': True,
         'OPTIONS': {
             'connect_timeout': 150,

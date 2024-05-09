@@ -1,6 +1,9 @@
 from transformers import BertJapaneseTokenizer, BertModel
 import torch
+import pickle
 import logging
+
+from api.models import Slogans
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +34,6 @@ class SentenceBertJapanese:
                                            truncation=True, return_tensors="pt").to(self.device)
             model_output = self.model(**encoded_input)
             sentence_embeddings = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
-
             all_embeddings.extend(sentence_embeddings)
 
         return torch.stack(all_embeddings)
@@ -40,16 +42,7 @@ class SentenceBertJapanese:
         encoded_input = self.tokenizer.encode_plus(sentence, padding="longest", truncation=True, return_tensors="pt").to(self.device)
         model_output = self.model(**encoded_input)
         sentence_embedding = self._mean_pooling(model_output, encoded_input["attention_mask"]).to('cpu')
-
         return sentence_embedding
-    
-    # def save(self, vecs, file_name):
-    #     vecs_list = [vec.tolist() for vec in vecs]
-    #     with open(csv_file_path, "w", newline="", encoding="utf-8") as csv_file:
-    #         writer = csv.writer(csv_file)
-    #         for vec_row in vecs_list:
-    #             writer.writerow(vec_row)
-    #     return "CSV file saved successfully."
     
     def get_vec_string(self, vec:torch.Tensor):
         vec_list = vec.tolist()[0]
@@ -57,6 +50,11 @@ class SentenceBertJapanese:
         vec_string = ','.join(vec_str_list)
         return vec_string
     
-    def vec_from_list(self, vecs_list: list):
-        vecs_tensor = torch.tensor(vecs_list)
-        return vecs_tensor
+    def vec_from_binary(self, slogans: Slogans):
+        tensor_list = []
+        for slogan in slogans:
+            serialized_tensor = slogan.vector
+            tensor = pickle.loads(serialized_tensor).squeeze()
+            tensor_list.append(tensor)
+        tensors = torch.stack(tensor_list)
+        return tensors

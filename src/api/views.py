@@ -9,16 +9,27 @@ logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def check_slogan(request):
+    start_time = time.time()
     slogan = request.GET.get('slogan_sentence', None)
     response_limit = request.GET.get('response_limit', None)
     response_limit = int(response_limit)
 
     slogan_service = SloganService()
     sentence_distances = slogan_service.get_sentence_distance(slogan, response_limit)
+    syori_time = time.time() - start_time
+    logger.info("処理時間: " + str(syori_time))
     return Response({'message':'success check slogan', 'distances': sentence_distances})
 
 @api_view(['POST'])
 def save_slogan(request):
+    slogans = request.data['slogan_sentences']
+    slogan_service = SloganService()
+    start_time = time.time()
+    with transaction.atomic():
+        slogan_service.seva_slogan(slogans)
+    syori_time = time.time() - start_time
+    logger.info("処理時間: " + str(syori_time))
+    return Response({'message':'success insert slogan'})
     try:
         slogans = request.data['slogan_sentences']
         slogan_service = SloganService()

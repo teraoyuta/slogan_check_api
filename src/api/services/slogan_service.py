@@ -3,10 +3,11 @@ from libraries.sentence_congerter import KanjiToHiraganaConverter
 import api.constants as constants
 from api.models import Slogans
 import torch.nn.functional as F
+import pickle
 from datetime import datetime
 import logging
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 class SloganService:
     def __init__(self):
@@ -17,24 +18,24 @@ class SloganService:
         hiragana = self.conberter.change_kangi_to_hiragana(sentence)
 
         all_slogans = Slogans.objects.all()
-        vector_list = [[float(value) for value in slogan.vector.split(',')] for slogan in all_slogans]
+        # vector_list = [slogan.vector for slogan in all_slogans]
         slogan_list = [slogan.slogan_sentence for slogan in all_slogans]
-        vecs = self.sentence_bert_model.vec_from_list(vector_list)
+        vecs = self.sentence_bert_model.vec_from_binary(all_slogans)
 
         target_vec = self.sentence_bert_model.encode_sentence(hiragana)
 
         # コサイン類似度による類似度算出
         distance_list = F.cosine_similarity(target_vec, vecs).tolist()
-
+        logger.info(target_vec)
+        logger.info(vecs)
+        logger.info(distance_list)
         json_data = []
-        
         for slogan, distance in zip(slogan_list, distance_list):
             entry = {
                 "slogan": slogan,
                 "distance": round(distance, 2),
             }
             json_data.append(entry)
-
         sorted_json_data = sorted(json_data, key=lambda x: x['distance'], reverse=True)
         if (limit is not None):
             sorted_json_data = sorted_json_data[:limit]
@@ -44,8 +45,8 @@ class SloganService:
         for slogan in slogans:
             hiragana = self.conberter.change_kangi_to_hiragana(slogan)
             vec = self.sentence_bert_model.encode_sentence(hiragana)
-            vec_string = self.sentence_bert_model.get_vec_string(vec)
-            new_slogan = Slogans(slogan_sentence=slogan, slogan_kana=hiragana, vector=vec_string)
+            serialized_vec = pickle.dumps(vec)
+            new_slogan = Slogans(slogan_sentence=slogan, slogan_kana=hiragana, vector=serialized_vec)
             new_slogan.save()
 
     def get_slogan_list(self, search_head_date: datetime = None, search_tail_date: datetime = None):
