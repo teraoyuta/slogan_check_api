@@ -16,9 +16,8 @@ class SloganService:
         
     def get_sentence_distance(self, sentence: str, limit: int):
         hiragana = self.conberter.change_kangi_to_hiragana(sentence)
-
         all_slogans = Slogans.objects.all()
-        slogan_vecs_dict = self.sentence_bert_model.vec_from_binary(all_slogans)
+        slogan_vecs_dict = self.sentence_bert_model.get_slogans_vec_dict(all_slogans)
 
         target_vec = self.sentence_bert_model.encode_sentence(hiragana)
 

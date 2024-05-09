@@ -50,7 +50,7 @@ class SentenceBertJapanese:
         vec_string = ','.join(vec_str_list)
         return vec_string
     
-    def vec_from_binary(self, slogans: Slogans):
+    def get_slogans_vec_dict(self, slogans: Slogans):
         tensor_list = []
         slogan_list = []
         for slogan in slogans:
