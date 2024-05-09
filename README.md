@@ -68,7 +68,7 @@
 
 <http://localhost:8000/api/save_slogan/>
 
-body
+##### リクエストbody
 
 ```json
 {
