@@ -1,5 +1,6 @@
 from libraries.sentence_bert import SentenceBertJapanese
 from libraries.sentence_congerter import KanjiToHiraganaConverter
+from django.core.paginator import Paginator
 import api.constants as constants
 from api.models import Slogans
 import torch.nn.functional as F
@@ -15,21 +16,23 @@ class SloganService:
         self.conberter = KanjiToHiraganaConverter()
         
     def get_sentence_distance(self, sentence: str, limit: int):
-        hiragana = self.conberter.change_kangi_to_hiragana(sentence)
-        all_slogans = Slogans.objects.all()
-        slogan_vecs_dict = self.sentence_bert_model.get_slogans_vec_dict(all_slogans)
-
-        target_vec = self.sentence_bert_model.encode_sentence(hiragana)
-
-        # コサイン類似度による類似度算出
-        distance_list = F.cosine_similarity(target_vec, slogan_vecs_dict[self.sentence_bert_model.VECS_KEY]).tolist()
         json_data = []
-        for slogan, distance in zip(slogan_vecs_dict[self.sentence_bert_model.SENTENCES_KEY], distance_list):
-            entry = {
-                "slogan": slogan,
-                "distance": round(distance, 2),
-            }
-            json_data.append(entry)
+        hiragana = self.conberter.change_kangi_to_hiragana(sentence)
+        target_vec = self.sentence_bert_model.encode_sentence(hiragana)
+        batch_size = 1000
+        paginator = Paginator(Slogans.objects.all(), batch_size)
+        for page_idx in range(1, paginator.num_pages + 1):
+            slogans_page = paginator.page(page_idx)
+            slogan_vecs_dict = self.sentence_bert_model.get_slogans_vec_dict(slogans_page)
+
+            # コサイン類似度による類似度算出
+            distance_list = F.cosine_similarity(target_vec, slogan_vecs_dict[self.sentence_bert_model.VECS_KEY]).tolist()
+            for slogan, distance in zip(slogan_vecs_dict[self.sentence_bert_model.SENTENCES_KEY], distance_list):
+                entry = {
+                    "slogan": slogan,
+                    "distance": round(distance, 2),
+                }
+                json_data.append(entry)
         sorted_json_data = sorted(json_data, key=lambda x: x["distance"], reverse=True)
         if (limit is not None):
             sorted_json_data = sorted_json_data[:limit]
