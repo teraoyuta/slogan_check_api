@@ -14,6 +14,10 @@ class SloganService:
     def __init__(self):
         self.sentence_bert_model = SentenceBertJapanese(constants.AI_MODEL_NAME)
         self.conberter = KanjiToHiraganaConverter()
+
+    def get_kana(self, sentence: str):
+        hiragana = self.conberter.change_kangi_to_hiragana(sentence)
+        return hiragana
         
     def get_sentence_distance(self, sentence: str, limit: int):
         json_data = []

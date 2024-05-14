@@ -185,3 +185,24 @@ search_head_date、search_tail_dateは共に任意です
 ```
 
 リクエストには、削除したい標語の登録ID(id)を指定します (削除は論理削除となります)
+
+## 付録
+
+### ひらがな文字列取得api
+
+#### リクエスト
+
+以下のURLにPOSTリクエストを送信します:
+
+<http://localhost:8000/api/get_kana_from_slogan/?slogan_sentence=少しずつ、確実に、前進しよう。>
+
+#### レスポンス
+
+```json
+{
+    "message": "success get kana",
+    "kana": "すこしずつ、かくじつに、ぜんしんしよう。"
+}
+```
+
+リクエストには、日本語にしたい文字列(slogan_sentence)を指定します。
